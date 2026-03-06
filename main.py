@@ -58,7 +58,6 @@ def Parse(FilePath):
                 i.pop(0)
 
             if not i or i == "\n":
-                pc += 1
                 continue
 
             i.insert(0,GetOpType(i[0]))
