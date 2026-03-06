@@ -1,4 +1,5 @@
 from lookup import R_TYPE, I_TYPE, S_TYPE, B_TYPE, U_TYPE, J_TYPE, REGISTERS
+from encoder import encode_instruction
 
 # Functions used in Parser
 
@@ -79,3 +80,7 @@ testparse = Parse(test)
 
 for i,j in testparse.items():
     print(i+1,j)
+
+encoded_instructions = encode_instruction(testparse)
+for pc, binary in encoded_instructions:
+            print(f"{pc}\t{binary}")
