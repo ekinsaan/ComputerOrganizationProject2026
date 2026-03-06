@@ -1,6 +1,7 @@
 import sys
 from lookup import R_TYPE, I_TYPE, S_TYPE, B_TYPE, U_TYPE, J_TYPE, REGISTERS
 from encoder import encode_instruction
+from validator import validate
 
 # Functions used in Parser
 
@@ -92,7 +93,7 @@ ReadablePath = sys.argv[3] if len(sys.argv) > 3 else None
 
 ParsedLines = Parse(InputPath)
 
-
+check = validate(ParsedLines)
 
 EncodedLines = encode_instruction(ParsedLines)
 
