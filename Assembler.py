@@ -103,4 +103,4 @@ with open(OutputPath, "w") as f:
 if ReadablePath:
     with open(ReadablePath, "w") as f:
         for i, j in ParsedLines.items():
-            f.write(f"{i} 0x{int(i):08X} {EncodedLines[int(i)][1]} {j}\n")   # human readable format
+            f.write(f"{i} 0x{int((i-1)*4):08X} {EncodedLines[int(i)][1]} {j}\n")   # human readable format
