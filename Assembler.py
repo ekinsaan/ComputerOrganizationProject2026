@@ -98,9 +98,9 @@ EncodedLines = encode_instruction(ParsedLines)
 
 with open(OutputPath, "w") as f:
     for i in EncodedLines:
-        f.write(i + "\n")
+        f.write(i[1] + "\n")
 
 if ReadablePath:
     with open(ReadablePath, "w") as f:
         for i, j in ParsedLines.items():
-            f.write(f"{i} 0x{int(i):08X} {EncodedLines[int(i)]} {j}\n")   # human readable format
+            f.write(f"{i} 0x{int(i):08X} {EncodedLines[int(i)][1]} {j}\n")   # human readable format
