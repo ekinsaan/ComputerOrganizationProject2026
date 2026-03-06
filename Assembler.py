@@ -1,3 +1,8 @@
+# Yash - Parser, Debugging, Lead
+# Shreyash - Encoding, General code
+# Rishika - Lookup, Code structure
+# Nisanta - Validator, Code structure
+
 import sys
 from lookup import R_TYPE, I_TYPE, S_TYPE, B_TYPE, U_TYPE, J_TYPE, REGISTERS
 from encoder import encode_instruction
