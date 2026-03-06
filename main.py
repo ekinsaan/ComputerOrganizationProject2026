@@ -48,7 +48,6 @@ def Parse(FilePath):
 
         for i in RawLines:
             if not i or i == "\n":
-                pc += 1
                 continue
 
             i = ParseLine(i)
