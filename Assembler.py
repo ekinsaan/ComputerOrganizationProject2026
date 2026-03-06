@@ -82,16 +82,6 @@ def Parse(FilePath):
 
         return output
 
-# test = r"C:\Users\HP\CollegeProjects\CO_Sem2_Project\test.txt"
-# testparse = Parse(test)
-
-# for i,j in testparse.items():
-#     print(i+1,j)
-
-# encoded_instructions = encode_instruction(testparse)
-# for pc, binary in encoded_instructions:
-#             print(f"{pc}\t{binary}")
-
 InputPath  = sys.argv[1]
 OutputPath = sys.argv[2]
 ReadablePath = sys.argv[3] if len(sys.argv) > 3 else None
@@ -109,4 +99,4 @@ with open(OutputPath, "w") as f:
 if ReadablePath:
     with open(ReadablePath, "w") as f:
         for i, j in ParsedLines.items():
-            f.write(f"{i} 0x{int(i*4):08X} {EncodedLines[int(i)][1]} {j}\n")   # human readable format
+            f.write(f"{i} 0x{int(i*4):08X} {EncodedLines[int(i)][1]} {j}\n")
