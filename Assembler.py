@@ -8,7 +8,7 @@ from lookup import R_TYPE, I_TYPE, S_TYPE, B_TYPE, U_TYPE, J_TYPE, REGISTERS
 from encoder import encode_instruction
 from validator import validate
 
-# Functions used in Parser
+# Function used in Parser
 
 def GetOpType(Op):
     if Op in R_TYPE:
