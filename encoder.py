@@ -82,6 +82,8 @@ def encode_instruction(parsed_dict):
             code.append((pc , binary_instruction))
 
         except Exception as error:
-            print(f"Error encoding instruction at PC {pc}: {instruction}. Error: {error}")
+            #print(f"Error encoding instruction at PC {pc}: {instruction}. Error: {error}")
+            pass
+
 
     return code
