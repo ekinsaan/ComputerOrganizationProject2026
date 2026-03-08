@@ -57,21 +57,22 @@ def validate(parsed_output):
                 errors.append(f"PC {pc}: doesnt have the expected no. of operands")
                 continue
 
-        # check if immediates are in hexadecimal
-        hex_found = False
-        for op in operands:
-            if type(op) == str and op.lstrip("-").startswith(("0x", "0X")):  
-                errors.append(f"PC {pc}: has a hexadecimal immediate. Only decimal values are accepted")
-                hex_found = True
-        if hex_found:
-            continue    
-
-        # checking registers
+        #checking registers
+        label_error = False
         for op in operands:
             if type(op) == int or op.lstrip("-").isdigit():
                 continue
+            # check if labels are actually present 
+            if instruction_type in ["B", "J"] and op == operands[-1]:
+                if type(op) == str and not op.startswith(("0x", "0X")):
+                    errors.append(f"PC {pc}: Undefined label")
+                    label_error = True
+                    continue
+
             if op not in REGISTERS:
                 errors.append(f"PC {pc}: has a invalid register")
+        if label_error:
+            continue
                 
         # check if immediate is in range
         if instruction_type in immediate_range:
@@ -79,17 +80,28 @@ def validate(parsed_output):
             imm = find_immediate(operands)
             if imm is None:
                 errors.append(f"PC {pc}: doesnt have an immediate value")
-            elif imm < low or imm > high:
+                continue 
+
+            if imm < low or imm > high:
                 errors.append(f"PC {pc}: immediate is out of range") 
+        #out of bounds check
+        if instruction_type in ["B","J"]:
+            target_pc = pc + imm
+            if target_pc not in parsed_output:
+                errors.append(f"PC {pc}: Target offset jumps out of program bounds")
+
 
     #check for virtual halt
-    last_pc = len(parsed_output) - 1
-    last_instr = parsed_output[last_pc]
-    opcode   = last_instr[1]
-    operands = last_instr[2:]
-    if not (opcode == "beq" and operands[0] == "zero" and operands[1] == "zero" and operands[2] == "0") :
-        errors.append("missing halt instruction at end of program")
-
+    halt = False
+    for pc , instructions in parsed_output.items():
+        if instructions[1] == "beq" and instructions[2] == "zero" and instructions[3] == "zero":
+            if instructions[4] == "0":
+                halt = True
+                break
+    
+    if not halt:
+        errors.append("Virtual halt is missing")
+    
     if errors: 
         for i in errors: 
             print(i)
