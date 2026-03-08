@@ -90,13 +90,14 @@ ParsedLines = Parse(InputPath)
 
 check = validate(ParsedLines)
 
-EncodedLines = encode_instruction(ParsedLines)
+if check:
+    EncodedLines = encode_instruction(ParsedLines)
 
-with open(OutputPath, "w") as f:
-    for i in EncodedLines:
-        f.write(i[1] + "\n")
+    with open(OutputPath, "w") as f:
+        for i in EncodedLines:
+            f.write(i[1] + "\n")
 
-if ReadablePath:
-    with open(ReadablePath, "w") as f:
-        for i, j in ParsedLines.items():
-            f.write(f"{i} 0x{int(i*4):08X} {EncodedLines[int(i)][1]} {j}\n")
+    if ReadablePath:
+        with open(ReadablePath, "w") as f:
+            for i, j in ParsedLines.items():
+                f.write(f"{i} 0x{int(i*4):08X} {EncodedLines[int(i)][1]} {j}\n")
