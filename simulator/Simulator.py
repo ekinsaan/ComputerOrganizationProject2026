@@ -91,7 +91,6 @@ def Decode(line):
     elif instructiontype == "J":
         decoded["rd"] = int(line[-12:-7],2)
         decoded["imm"] = line[0] + line[12:20] + line[11] + line[1:11] + "0"
-        
 
     return decoded
 
@@ -271,6 +270,16 @@ def Execute_J_Type(Decoded):
 def Execute(decoded):
     if decoded["type"] == "R":
         Execute_R_Type(decoded)
+    elif decoded["type"] == "I":
+        Execute_I_Type(decoded)
+    elif decoded["type"] == "S":
+        Execute_S_Type(decoded)
+    elif decoded["type"] == "B":
+        Execute_B_Type(decoded)
+    elif decoded["type"] == "U":
+        Execute_U_Type(decoded)
+    elif decoded["type"] == "J":
+        Execute_J_Type(decoded)
 
 def VirtualHaltCheck(decoded):
     if decoded["type"] == "B":
