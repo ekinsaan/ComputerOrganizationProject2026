@@ -164,3 +164,51 @@ def Execute_J_Type(Decoded):
 def Execute(decoded):
     if decoded["type"] == "R":
         Execute_R_Type(decoded)
+
+def VirtualHaltCheck(decoded):
+    if decoded["type"] == "B":
+        if decoded["funct3"] == "000":
+            if Registers[decoded["rs1"]] == 0 and Registers[decoded["rs2"]] == 0 and SignedBinaryToDecimal(decoded["imm"]) == 0:
+                return True
+
+def CreateRegisterLineWrite():
+    output = f"0b{DecimalToSignedBinary(ProgramCounter)} "
+    for i in Registers:
+        output += f"0b{DecimalToSignedBinary(i)} "
+    OutputLines.append(output)
+
+def CreateDataMemoryWrite():
+    Counter = 0x00010000
+    for i in DataMemory:
+        OutputLines.append(f"0x{Counter:0{8}X}:0b{DecimalToSignedBinary(i)}")
+        Counter += 4
+
+def Run():
+    infinitystop = 0
+    while infinitystop < 1000:
+        line = GetLine()
+        decoded = Decode(line)
+        if VirtualHaltCheck(decoded) == True:
+            CreateRegisterLineWrite()
+            CreateDataMemoryWrite()
+            return
+        Execute(decoded)
+        Registers[0] = 0
+        CreateRegisterLineWrite()
+        infinitystop += 1
+    print(f"Reached {infinitystop} loops")
+
+InputPath  = sys.argv[1]
+OutputPath = sys.argv[2]
+ReadablePath = sys.argv[3] if len(sys.argv) > 3 else None
+
+with open(InputPath, "r") as f:
+    lines = f.readlines()
+    for i in lines:
+        Instructions.append(i.rstrip())
+
+Run()
+
+with open(OutputPath, "w") as f:
+    for i in OutputLines:
+        f.write(i + "\n")
