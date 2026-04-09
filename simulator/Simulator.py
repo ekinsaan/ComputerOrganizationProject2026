@@ -25,13 +25,35 @@ def MemoryRead(address):
         return DataMemory[(address - 0x00010000) // 4]
     elif 0x00000100 <= address <= 0x0000017F:
         return StackMemory[(address - 0x00000100) // 4]
-    return 0
+    else:
+        print(f"Invalid memory acess at 0x{address:08X}")
+        with open(OutputPath, "w") as f:
+            for i in OutputLines:
+                f.write(i + "\n")
+        sys.exit(1)
 
 def MemoryWrite(address, value):
+
+    if address % 4 != 0:
+        print(f"Unaligned memory access at 0x{address:08X}")
+        with open(OutputPath, "w") as f:
+            for i in OutputLines:
+                f.write(i + "\n")
+        sys.exit(1)
+
     if 0x00010000 <= address <= 0x0001007F:
         DataMemory[(address - 0x00010000) // 4] = value & 0xFFFFFFFF
     elif 0x00000100 <= address <= 0x0000017F:
         StackMemory[(address - 0x00000100) // 4] = value & 0xFFFFFFFF
+    else:
+        print(f"Invalid memory acess at 0x{address:08X}")
+        with open(OutputPath, "w") as f:
+            for i in OutputLines:
+                f.write(i + "\n")
+        sys.exit(1)
+
+def GetLine():
+    return Instructions[ProgramCounter // 4]
 
 def Decode(line):
     decoded = {}
