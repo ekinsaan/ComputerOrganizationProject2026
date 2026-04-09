@@ -84,6 +84,91 @@ def Execute_R_Type(Decoded):
             #add
             Registers[rd] = (rs1 + rs2) & 0xFFFFFFFF
             ProgramCounter += 4
+            
+        elif Decoded["funct7"] == "0100000":
+            #sub
+            Registers[rd] = (rs1 - rs2) & 0xFFFFFFFF
+            ProgramCounter += 4
+
+    elif Decoded["funct3"] == "001":
+        if Decoded["funct7"] == "0000000":
+            #sll
+            shamt = rs2 & 0x1F
+            Registers[rd] = (rs1 << shamt) & 0xFFFFFFFF
+            ProgramCounter += 4
+
+    elif Decoded["funct3"] == "010":
+        if Decoded["funct7"] == "0000000":
+            #slt
+            signed_rs1 = rs1 if rs1 < 0x80000000 else rs1 - 0x100000000
+            signed_rs2 = rs2 if rs2 < 0x80000000 else rs2 - 0x100000000
+            Registers[rd] = 1 if signed_rs1 < signed_rs2 else 0
+            ProgramCounter += 4
+
+    elif Decoded["funct3"] == "011":
+        if Decoded["funct7"] == "0000000":
+            #sltu
+            Registers[rd] = 1 if rs1 < rs2 else 0
+            ProgramCounter += 4
+
+    elif Decoded["funct3"] == "100":
+        if Decoded["funct7"] == "0000000":
+            #xor
+            Registers[rd] = (rs1 ^ rs2) & 0xFFFFFFFF
+            ProgramCounter += 4
+
+    elif Decoded["funct3"] == "101":
+        if Decoded["funct7"] == "0000000":
+            #srl
+            shamt = rs2 & 0x1F
+            Registers[rd] = (rs1 & 0xFFFFFFFF) >> shamt
+            ProgramCounter += 4
+
+    elif Decoded["funct3"] == "110":
+        if Decoded["funct7"] == "0000000":
+            #or
+            Registers[rd] = (rs1 | rs2) & 0xFFFFFFFF
+            ProgramCounter += 4
+
+    elif Decoded["funct3"] == "111":
+        if Decoded["funct7"] == "0000000":
+            #and
+            Registers[rd] = (rs1 & rs2) & 0xFFFFFFFF
+            ProgramCounter += 4
+
+def Execute_I_Type(Decoded):
+    global ProgramCounter
+    rs1 = Registers[Decoded["rs1"]]
+    rd  = Decoded["rd"]
+    imm = SignedBinaryToDecimal(Decoded["imm"])
+
+    if Decoded["opcode"] == "0000011":
+        if Decoded["funct3"] == "010":
+            # lw
+            address = (rs1 + imm) & 0xFFFFFFFF
+            Registers[rd] = MemoryRead(address)
+            ProgramCounter += 4
+
+    elif Decoded["opcode"] == "0010011":
+        if Decoded["funct3"] == "000":
+            # addi
+            Registers[rd] = (rs1 + imm) & 0xFFFFFFFF
+            ProgramCounter += 4
+
+        elif Decoded["funct3"] == "011":
+            # sltiu
+            unsigned_rs1 = rs1 & 0xFFFFFFFF
+            unsigned_imm = imm & 0xFFFFFFFF
+            Registers[rd] = 1 if unsigned_rs1 < unsigned_imm else 0
+            ProgramCounter += 4
+
+    elif Decoded["opcode"] == "1100111":
+        if Decoded["funct3"] == "000":
+            # jalr
+            return_address = (ProgramCounter + 4) & 0xFFFFFFFF
+            target = (rs1 + imm) & 0xFFFFFFFE
+            Registers[rd] = return_address
+            ProgramCounter = target
 
 def Execute_S_Type(Decoded):
     global ProgramCounter
