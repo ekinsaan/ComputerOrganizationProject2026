@@ -80,6 +80,17 @@ def Decode(line):
         decoded["rs1"] = int(line[-20:-15],2)
         decoded["rs2"] = int(line[-25:-20],2)
         decoded["imm"] = line[:-25] + line[-12:-7]
+    elif instructiontype == "B":
+        decoded["funct3"] = line[-15:-12]
+        decoded["rs1"] = int(line[-20:-15],2)
+        decoded["rs2"] = int(line[-25:-20],2)
+        decoded["imm"] = line[0] + line[-8] + line[1:7] + line[-12:-8] + "0"
+    elif instructiontype == "U":
+        decoded["rd"] = int(line[-12:-7],2)
+        decoded["imm"] = line[:-12]
+    elif instructiontype == "J":
+        decoded["rd"] = int(line[-12:-7],2)
+        decoded["imm"] = line[0] + line[12:20] + line[11] + line[1:11] + "0"
         
 
     return decoded
