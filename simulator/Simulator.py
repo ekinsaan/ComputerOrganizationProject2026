@@ -11,6 +11,15 @@ Registers[2] = 0x0000017C
 
 OutputLines = []
 
+def DecimalToSignedBinary(number):
+    return f"{number & ((1 << 32) - 1):0{32}b}"
+
+def SignedBinaryToDecimal(number):
+    if number[0] == '1':
+        return int(number, 2) - (1 << len(number))
+    else:
+        return int(number, 2)
+
 def Decode(line):
     decoded = {}
 
