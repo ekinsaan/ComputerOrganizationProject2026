@@ -28,3 +28,19 @@ def Decode(line):
         decoded["funct7"] = line[:-25]
 
     return decoded
+
+def Execute_R_Type(Decoded):
+    global ProgramCounter
+    rs1 = Registers[Decoded["rs1"]]
+    rs2 = Registers[Decoded["rs2"]]
+    rd = Decoded["rd"]
+
+    if Decoded["funct3"] == "000":
+        if Decoded["funct7"] == "0000000":
+            #add
+            Registers[rd] = (rs1 + rs2) & 0xFFFFFFFF
+            ProgramCounter += 4
+
+def Execute(decoded):
+    if decoded["type"] == "R":
+        Execute_R_Type(decoded)
