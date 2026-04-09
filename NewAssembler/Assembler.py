@@ -1,1 +1,103 @@
+# Yash - Parser, Debugging, Lead
+# Shreyash - Encoding, General code
+# Rishika - Lookup, Code structure
+# Nisanta - Validator, Code structure
 
+import sys
+from lookup import R_TYPE, I_TYPE, S_TYPE, B_TYPE, U_TYPE, J_TYPE, REGISTERS
+from encoder import encode_instruction
+from validator import validate
+
+# Function used in Parser
+
+def GetOpType(Op):
+    if Op in R_TYPE:
+        return "R"
+    if Op in I_TYPE:
+        return "I"
+    if Op in S_TYPE:
+        return "S"
+    if Op in B_TYPE:
+        return "B"
+    if Op in U_TYPE:
+        return "U"
+    if Op in J_TYPE:
+        return "J"
+    return None
+
+def ParseLine(Line):
+    # strip commas
+    Line = Line.strip()
+    Line = Line.replace(",", " ")
+
+    Line = Line.split()
+    Elements = Line
+
+    for i in Elements:
+        if "(" in i:
+            index = Line.index(i)
+            Line.remove(i)
+            parts = i.split("(")
+            parts[1] = parts[1][:-1] # removing )
+            Line.insert(index,parts[1])
+            Line.insert(index,parts[0])
+
+    return Line
+
+def Parse(FilePath):
+    with open(FilePath, "r") as f:
+        # ignores empty lines, this line below has been created using online sources
+        RawLines = f.readlines()
+
+        output = {}
+        labels = {}
+
+        pc = 0
+
+        for i in RawLines:
+            if not i or i == "\n":
+                continue
+
+            i = ParseLine(i)
+
+            if i[0][-1] == ":":
+                i[0] = i[0][:-1]
+                labels[i[0]] = pc
+                i.pop(0)
+
+            if not i or i == "\n":
+                continue
+
+            i.insert(0,GetOpType(i[0]))
+
+            output[pc] = i
+
+            pc += 1
+
+        for i, j in output.items():
+            for k in output[i]:
+                for l in labels.keys():
+                    if k == l:
+                        output[i][output[i].index(k)] = labels[l] - i
+
+        return output
+
+InputPath  = sys.argv[1]
+OutputPath = sys.argv[2]
+ReadablePath = sys.argv[3] if len(sys.argv) > 3 else None
+
+ParsedLines = Parse(InputPath)
+
+check = validate(ParsedLines)
+
+if check:
+    EncodedLines = encode_instruction(ParsedLines)
+
+    with open(OutputPath, "w") as f:
+        for i in EncodedLines:
+            f.write(i[1] + "\n")
+
+    if ReadablePath:
+        with open(ReadablePath, "w") as f:
+            for i, j in ParsedLines.items():
+                f.write(f"{i} 0x{int(i*4):08X} {EncodedLines[int(i)][1]} {j}\n")
