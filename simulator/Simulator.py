@@ -20,6 +20,19 @@ def SignedBinaryToDecimal(number):
     else:
         return int(number, 2)
 
+def MemoryRead(address):
+    if 0x00010000 <= address <= 0x0001007F:
+        return DataMemory[(address - 0x00010000) // 4]
+    elif 0x00000100 <= address <= 0x0000017F:
+        return StackMemory[(address - 0x00000100) // 4]
+    return 0
+
+def MemoryWrite(address, value):
+    if 0x00010000 <= address <= 0x0001007F:
+        DataMemory[(address - 0x00010000) // 4] = value & 0xFFFFFFFF
+    elif 0x00000100 <= address <= 0x0000017F:
+        StackMemory[(address - 0x00000100) // 4] = value & 0xFFFFFFFF
+
 def Decode(line):
     decoded = {}
 
