@@ -70,6 +70,17 @@ def Decode(line):
         decoded["rs1"] = int(line[-20:-15],2)
         decoded["rs2"] = int(line[-25:-20],2)
         decoded["funct7"] = line[:-25]
+    elif instructiontype == "I":
+        decoded["rd"] = int(line[-12:-7],2)
+        decoded["funct3"] = line[-15:-12]
+        decoded["rs1"] = int(line[-20:-15],2)
+        decoded["imm"] = line[:-20]
+    elif instructiontype == "S":
+        decoded["funct3"] = line[-15:-12]
+        decoded["rs1"] = int(line[-20:-15],2)
+        decoded["rs2"] = int(line[-25:-20],2)
+        decoded["imm"] = line[:-25] + line[-12:-7]
+        
 
     return decoded
 
